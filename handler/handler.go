@@ -48,14 +48,9 @@ func Server() {
 	service.AddInvokeHandler(func(name string, args []reflect.Value, ctx rpc.Context, next rpc.NextInvokeHandler) (results []reflect.Value, err error) {
 		name = strings.Replace(name, "_", ".", 1)
 		results, err = next(name, args, ctx)
-		spend := (time.Now().UnixNano() - ctx.GetInt64("start")) / 1000000
-		spendInfo := ""
-		if spend > 1000 {
-			spendInfo = fmt.Sprintf("%vs", spend/1000)
-		} else {
-			spendInfo = fmt.Sprintf("%vms", spend)
-		}
-		log.Printf("%16s() spend %s", name, spendInfo)
+		spend := time.Now().UnixNano() - ctx.GetInt64("start")
+		spendInfo := time.Duration(spend).Round(time.Millisecond)
+		log.Printf("%16s() spend %v", name, spendInfo)
 		return
 	})
 	service.AddAllMethods(handler)
