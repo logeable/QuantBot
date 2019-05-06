@@ -1,10 +1,12 @@
 package trader
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	//"encoding/json"
 	//"fmt"
-	"log"
+
 	//"reflect"
+	"log"
 	"sync"
 	"time"
 
@@ -52,7 +54,7 @@ func (g *Global) Sleep(intervals ...interface{}) {
 
 // Console ...
 func (g *Global) Console(msgs ...interface{}) {
-	log.Printf("%v %v\n", constant.INFO, msgs)
+	log.Printf("%v %v\n", constant.INFO, spew.Sdump(msgs))
 }
 
 // Log ...
