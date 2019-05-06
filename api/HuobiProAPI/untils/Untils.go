@@ -148,7 +148,7 @@ func ApiKeyGet(mapParams map[string]string, strRequestPath string) string {
 	mapParams["Signature"] = CreateSign(mapParams, strMethod, hostName, strRequestPath, config.SECRET_KEY)
 
 	strUrl := config.TRADE_URL + strRequestPath
-	return HttpGetRequest(strUrl, MapValueEncodeURI(mapParams))
+	return HttpGetRequest(strUrl, mapParams)
 }
 
 // 进行签名后的HTTP POST请求, 参考官方Python Demo写的
@@ -168,7 +168,7 @@ func ApiKeyPost(mapParams map[string]string, strRequestPath string) string {
 	hostName := "api.huobi.pro"
 
 	mapParams2Sign["Signature"] = CreateSign(mapParams2Sign, strMethod, hostName, strRequestPath, config.SECRET_KEY)
-	strUrl := config.TRADE_URL + strRequestPath + "?" + Map2UrlQuery(MapValueEncodeURI(mapParams2Sign))
+	strUrl := config.TRADE_URL + strRequestPath + "?" + Map2UrlQuery(mapParams2Sign)
 
 	return HttpPostRequest(strUrl, mapParams)
 }
@@ -182,8 +182,7 @@ func ApiKeyPost(mapParams map[string]string, strRequestPath string) string {
 func CreateSign(mapParams map[string]string, strMethod, strHostUrl, strRequestPath, strSecretKey string) string {
 	// 参数处理, 按API要求, 参数名应按ASCII码进行排序(使用UTF-8编码, 其进行URI编码, 16进制字符必须大写)
 	sortedParams := MapSortByKey(mapParams)
-	encodeParams := MapValueEncodeURI(sortedParams)
-	strParams := Map2UrlQuery(encodeParams)
+	strParams := Map2UrlQuery(sortedParams)
 
 	strPayload := strMethod + "\n" + strHostUrl + "\n" + strRequestPath + "\n" + strParams
 
@@ -208,32 +207,15 @@ func MapSortByKey(mapValue map[string]string) map[string]string {
 	return mapReturn
 }
 
-// 对Map的值进行URI编码
-// mapParams: 需要进行URI编码的map
-// return: 编码后的map
-func MapValueEncodeURI(mapValue map[string]string) map[string]string {
-	for key, value := range mapValue {
-		valueEncodeURI := url.QueryEscape(value)
-		mapValue[key] = valueEncodeURI
-	}
-
-	return mapValue
-}
-
 // 将map格式的请求参数转换为字符串格式的
 // mapParams: map格式的参数键值对
 // return: 查询字符串
 func Map2UrlQuery(mapParams map[string]string) string {
-	var strParams string
+	values := url.Values{}
 	for key, value := range mapParams {
-		strParams += (key + "=" + value + "&")
+		values.Add(key, value)
 	}
-
-	if 0 < len(strParams) {
-		strParams = string([]rune(strParams)[:len(strParams)-1])
-	}
-
-	return strParams
+	return values.Encode()
 }
 
 // HMAC SHA256加密
