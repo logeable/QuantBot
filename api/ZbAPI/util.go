@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-resty/resty"
+	"gopkg.in/resty.v1"
 )
 
 // SHA1 加密

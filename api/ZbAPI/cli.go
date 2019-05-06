@@ -3,7 +3,7 @@ package ZbAPI
 import (
 	"os"
 
-	"github.com/go-resty/resty"
+	"gopkg.in/resty.v1"
 )
 
 type configure struct {
