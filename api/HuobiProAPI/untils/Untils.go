@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
 	//"os"
 	"sort"
 	"strings"
@@ -61,10 +62,10 @@ func HttpGetRequest(strUrl string, mapParams map[string]string) string {
 
 	// 发出请求
 	response, err := httpClient.Do(request)
-	defer response.Body.Close()
 	if nil != err {
 		return err.Error()
 	}
+	defer response.Body.Close()
 
 	// 解析响应内容
 	body, err := ioutil.ReadAll(response.Body)

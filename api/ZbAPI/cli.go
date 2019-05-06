@@ -1,8 +1,6 @@
 package ZbAPI
 
 import (
-	"os"
-
 	"gopkg.in/resty.v1"
 )
 
@@ -20,10 +18,6 @@ var (
 )
 
 func init() {
-
-	os.Setenv("HTTP_PROXY", "http://127.0.0.1:6667")
-	os.Setenv("HTTPS_PROXY", "https://127.0.0.1:6667")
-
 	Config.ACCESS_KEY = ""
 	Config.SECRET_KEY = ""
 	Config.dataURL = "http://api.zb.com/data/v1/"
