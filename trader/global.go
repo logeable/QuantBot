@@ -54,6 +54,11 @@ func (g *Global) Sleep(intervals ...interface{}) {
 
 // Console ...
 func (g *Global) Console(msgs ...interface{}) {
+	log.Printf("%v %v\n", constant.INFO, msgs)
+}
+
+// Console ...
+func (g *Global) Spew(msgs ...interface{}) {
 	log.Printf("%v %v\n", constant.INFO, spew.Sdump(msgs))
 }
 

@@ -38,6 +38,7 @@ func NewOKEX(opt Option) Exchange {
 			"ONT/USDT":  "ont_usdt",
 			"QTUM/USDT": "qtum_usdt",
 			"ONT/ETH":   "ont_eth",
+			"ETH/BTC":   "eth_btc",
 		},
 		tradeTypeMap: map[string]string{
 			"buy":         constant.TradeTypeBuy,

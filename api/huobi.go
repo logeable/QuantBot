@@ -36,11 +36,12 @@ func NewHuobi(opt Option) Exchange {
 	//...
 	return &Huobi{
 		stockTypeMap: map[string]string{
-			"BTC/USDT":  "btc",
-			"ETH/USDT":  "eth",
-			"EOS/USDT":  "eos",
-			"ONT/USDT":  "ont",
-			"QTUM/USDT": "qtum",
+			"BTC/USDT":  "btcusdt",
+			"ETH/USDT":  "ethusdt",
+			"EOS/USDT":  "eosusdt",
+			"ONT/USDT":  "ontusdt",
+			"QTUM/USDT": "qtumusdt",
+			"ETH/BTC": "ethbtc",
 		},
 		tradeTypeMap: map[string]string{
 			"buy-limit":   constant.TradeTypeBuy,
@@ -308,7 +309,7 @@ func (e *Huobi) getTicker(stockType string, sizes ...interface{}) (ticker Ticker
 		err = fmt.Errorf("GetTicker() error, unrecognized stockType: %+v", stockType)
 		return
 	}
-	result, err := services.GetMarketDepth(e.stockTypeMap[stockType]+"usdt", "step0")
+	result, err := services.GetMarketDepth(e.stockTypeMap[stockType], "step0")
 	if err != nil {
 		err = fmt.Errorf("GetTicker() error, %+v", err)
 		return
