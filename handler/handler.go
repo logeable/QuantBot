@@ -27,7 +27,6 @@ func (e event) OnSendHeader(ctx *rpc.HTTPContext) {
 
 // Server ...
 func Server() {
-	port := config.String("port")
 	service := rpc.NewHTTPService()
 	handler := struct {
 		User      user
@@ -57,6 +56,6 @@ func Server() {
 	http.Handle("/api", service)
 	http.Handle("/", http.FileServer(http.Dir("web/dist")))
 	fmt.Printf("%v  Version %v\n", constant.Banner, constant.Version)
-	log.Printf("Running at http://localhost:%v\n", port)
-	http.ListenAndServe(":"+port, nil)
+	log.Printf("Running at http://%v\n", config.Config.Server.Addr)
+	log.Fatal(http.ListenAndServe(config.Config.Server.Addr, nil))
 }

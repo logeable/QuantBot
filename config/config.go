@@ -2,31 +2,32 @@ package config
 
 import (
 	"log"
-	"strings"
+	"os"
 
-	"github.com/go-ini/ini"
+	"gopkg.in/yaml.v2"
 )
 
-var confs = make(map[string]string)
-
-func init() {
-	conf, err := ini.InsensitiveLoad("custom/config.ini")
-	if err != nil {
-		conf, err = ini.InsensitiveLoad("config.ini")
-		if err != nil {
-			log.Fatalln("Load config.ini error:", err)
-		}
+type config struct {
+	Database struct {
+		Driver string
+		DSN    string
 	}
-	keys := conf.Section("").KeyStrings()
-	for _, k := range keys {
-		confs[k] = conf.Section("").Key(k).String()
-	}
-	if confs["logstimezone"] == "" {
-		confs["logstimezone"] = "Local"
+	Server struct {
+		Addr string
 	}
 }
 
-// String ...
-func String(key string) string {
-	return confs[strings.ToLower(key)]
+var Config *config
+
+func init() {
+	f, err := os.Open(os.ExpandEnv(`$HOME/.quantbot/config.yml`))
+	if err != nil {
+		log.Fatal("open config file failed:", err)
+	}
+
+	Config = new(config)
+	err = yaml.NewDecoder(f).Decode(Config)
+	if err != nil {
+		log.Fatal("decode config file failed:", err)
+	}
 }

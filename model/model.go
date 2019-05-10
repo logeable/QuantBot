@@ -2,23 +2,21 @@ package model
 
 import (
 	"log"
-	"strings"
 	"time"
 
 	"github.com/hprose/hprose-golang/io"
 	"github.com/jinzhu/gorm"
+	"github.com/phonegapX/QuantBot/config"
+
 	// for db SQL
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/phonegapX/QuantBot/config"
 )
 
 var (
 	// DB Database
-	DB     *gorm.DB
-	dbType = config.String("dbtype")
-	dbURL  = config.String("dburl")
+	DB *gorm.DB
 )
 
 func init() {
@@ -28,15 +26,9 @@ func init() {
 	io.Register((*Trader)(nil), "Trader", "json")
 	io.Register((*Log)(nil), "Log", "json")
 	var err error
-	DB, err = gorm.Open(strings.ToLower(dbType), dbURL)
+	DB, err = gorm.Open(config.Config.Database.Driver, config.Config.Database.DSN)
 	if err != nil {
-		log.Printf("Connect to %v database error: %v\n", dbType, err)
-		dbType = "sqlite3"
-		dbURL = "custom/data.db"
-		DB, err = gorm.Open(dbType, dbURL)
-		if err != nil {
-			log.Fatalln("Connect to database error:", err)
-		}
+		log.Fatalf("Connect database error: %v\n", err)
 	}
 	DB.AutoMigrate(&User{}, &Exchange{}, &Algorithm{}, &TraderExchange{}, &Trader{}, &Log{})
 	users := []User{}
@@ -59,7 +51,7 @@ func ping() {
 	for {
 		if err := DB.Exec("SELECT 1").Error; err != nil {
 			log.Println("Database ping error:", err)
-			if DB, err = gorm.Open(strings.ToLower(dbType), dbURL); err != nil {
+			if DB, err = gorm.Open(config.Config.Database.Driver, config.Config.Database.DSN); err != nil {
 				log.Println("Retry connect to database error:", err)
 			}
 		}
@@ -69,5 +61,5 @@ func ping() {
 
 // NewOrm ...
 func NewOrm() (*gorm.DB, error) {
-	return gorm.Open(strings.ToLower(dbType), dbURL)
+	return gorm.Open(config.Config.Database.Driver, config.Config.Database.DSN)
 }
