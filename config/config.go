@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
@@ -20,7 +21,11 @@ type config struct {
 var Config *config
 
 func init() {
-	f, err := os.Open(os.ExpandEnv(`$HOME/.quantbot/config.yml`))
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	f, err := os.Open(filepath.Join(home, `/.quantbot/config.yml`))
 	if err != nil {
 		log.Fatal("open config file failed:", err)
 	}
